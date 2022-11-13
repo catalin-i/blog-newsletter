@@ -7,6 +7,9 @@ pub struct UserData {
 }
 
 pub async fn subscribe(form: web::Form<UserData>) -> impl Responder {
-    println!("User: {}, with email: {}, subscribed!", form.name, form.email);
+    println!(
+        "User: {}, with email: {}, subscribed!",
+        form.name, form.email
+    );
     HttpResponse::Ok()
 }
