@@ -1,4 +1,4 @@
-use blog_newsletter::run;
+use blog_newsletter::startup::run;
 use std::net::TcpListener;
 
 #[tokio::main]
