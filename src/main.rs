@@ -6,7 +6,7 @@ use std::net::TcpListener;
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
-    let subscriber = get_subscriber("blog-newsletter".into(), "info".into());
+    let subscriber = get_subscriber("blog-newsletter".into(), "info".into(), std::io::stdout);
     init_subscriber(subscriber);
     let configuration = get_configuration().expect("Failed to get configuration file!");
     let connection_pool = PgPool::connect(&configuration.database.connection_string())
