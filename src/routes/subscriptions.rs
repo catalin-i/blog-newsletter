@@ -20,16 +20,8 @@ subscriber_email = %form.email,
 subscriber_name = %form.name
 )
 )]
-pub async fn subscribe(form: web::Form<UserData>, db_pool: web::Data<PgPool>) -> impl Responder {
-    tracing::info!(
-        "request_id {} - Adding '{}' '{}' as a new subscriber.",
-        request_id,
-        form.email,
-        form.name
-    );
-    tracing::info!("Starting insert subscriber");
-    let query_span = tracing::info_span!("Entering insert query");
-    match insert_subscriber(&db_pool, &form).await {
+pub async fn subscribe(form: web::Form<UserData>, pool: web::Data<PgPool>) -> impl Responder {
+    match insert_subscriber(&pool, &form).await {
         Ok(_) => HttpResponse::Ok().finish(),
         Err(_) => HttpResponse::InternalServerError().finish(),
     }
@@ -39,7 +31,7 @@ pub async fn subscribe(form: web::Form<UserData>, db_pool: web::Data<PgPool>) ->
     name = "Saving new subscriber details in the database",
     skip(form, pool)
 )]
-pub async fn insert_subscriber(pool: &PgPool, form: &FormData) -> Result<(), sqlx::Error> {
+pub async fn insert_subscriber(pool: &PgPool, form: &UserData) -> Result<(), sqlx::Error> {
     sqlx::query!(
         r#"
 INSERT INTO subscriptions (id, email, name, subscribed_at)
