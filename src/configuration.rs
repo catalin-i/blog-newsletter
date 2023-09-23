@@ -1,7 +1,7 @@
 use secrecy::{ExposeSecret, Secret};
 use serde_aux::field_attributes::deserialize_number_from_string;
-use sqlx::{ConnectOptions, PgConnection};
 use sqlx::postgres::{PgConnectOptions, PgSslMode};
+use sqlx::{ConnectOptions, PgConnection};
 
 #[derive(serde::Deserialize)]
 pub struct Settings {
@@ -16,7 +16,7 @@ pub struct DatabaseSettings {
     pub port: u16,
     pub host: String,
     pub database_name: String,
-    pub require_ssl: bool
+    pub require_ssl: bool,
 }
 
 #[derive(serde::Deserialize)]
@@ -25,7 +25,6 @@ pub struct ApplicationSettings {
     pub port: u16,
     pub host: String,
 }
-
 
 impl DatabaseSettings {
     pub fn without_db(&self) -> PgConnectOptions {
