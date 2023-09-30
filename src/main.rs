@@ -1,4 +1,5 @@
 use blog_newsletter::configuration::get_configuration;
+use blog_newsletter::email_client::EmailClient;
 use blog_newsletter::startup::run;
 use blog_newsletter::telemetry::{get_subscriber, init_subscriber};
 use secrecy::ExposeSecret;
@@ -14,7 +15,11 @@ async fn main() -> std::io::Result<()> {
     let connection_pool = PgPoolOptions::new()
         .acquire_timeout(std::time::Duration::from_secs(2))
         .connect_lazy_with(configuration.database.with_db());
-    //.expect("Failed to connect to Postgres.");
+    let sender_email = configuration
+        .email_client
+        .sender()
+        .expect("Invalid sender email address.");
+    let email_client = EmailClient::new(configuration.email_client.base_url, sender_email);
     let address = format!(
         "{}:{}",
         configuration.application.host, configuration.application.port
@@ -22,5 +27,5 @@ async fn main() -> std::io::Result<()> {
     let listener = TcpListener::bind(address).unwrap();
     let port = listener.local_addr().unwrap().port();
     println!("Running on port: {}", port);
-    run(listener, connection_pool)?.await
+    run(listener, connection_pool, email_client)?.await
 }
