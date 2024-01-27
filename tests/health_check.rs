@@ -2,8 +2,7 @@ use blog_newsletter::configuration::{get_configuration, DatabaseSettings};
 use blog_newsletter::email_client::EmailClient;
 use blog_newsletter::telemetry::{get_subscriber, init_subscriber};
 use once_cell::sync::Lazy;
-use secrecy::ExposeSecret;
-use sqlx::{Connection, Error, Executor, PgConnection, PgPool, Postgres};
+use sqlx::{Connection, Executor, PgConnection, PgPool};
 use std::net::TcpListener;
 use uuid::Uuid;
 
@@ -141,10 +140,12 @@ async fn spawn_app() -> TestApp {
         .email_client
         .sender()
         .expect("Invalid sender email address.");
+    let timeout = configuration.email_client.timeout();
     let email_client = EmailClient::new(
         configuration.email_client.base_url,
         sender_email,
         configuration.email_client.authorization_token,
+        timeout
     );
 
     let server = blog_newsletter::startup::run(listener, connection_pool.clone(), email_client)
