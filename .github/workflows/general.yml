@@ -209,3 +209,4 @@ jobs:
         uses: actions-rs/tarpaulin@v0.1
         with:
           args: '--ignore-tests --avoid-cfg-tarpaulin'
+          version: 0.22.0
