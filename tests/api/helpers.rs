@@ -1,9 +1,9 @@
+use blog_newsletter::configuration::{get_configuration, DatabaseSettings};
+use blog_newsletter::startup::{get_connection_pool, Application};
+use blog_newsletter::telemetry::{get_subscriber, init_subscriber};
 use once_cell::sync::Lazy;
 use sqlx::{Connection, Executor, PgConnection, PgPool};
 use uuid::Uuid;
-use blog_newsletter::configuration::{get_configuration, DatabaseSettings};
-use blog_newsletter::startup::{Application, get_connection_pool};
-use blog_newsletter::telemetry::{get_subscriber, init_subscriber};
 
 // Ensure that the `tracing` stack is only initialised once using `once_cell`
 static TRACING: Lazy<()> = Lazy::new(|| {
@@ -38,22 +38,22 @@ impl TestApp {
 
 pub async fn spawn_app() -> TestApp {
     Lazy::force(&TRACING);
-// Randomise configuration to ensure test isolation
+    // Randomise configuration to ensure test isolation
     let configuration = {
         let mut c = get_configuration().expect("Failed to read configuration.");
-// Use a different database for each test case
+        // Use a different database for each test case
         c.database.database_name = Uuid::new_v4().to_string();
-// Use a random OS port
+        // Use a random OS port
         c.application.port = 0;
         c
     };
-// Create and migrate the database
+    // Create and migrate the database
     configure_database(&configuration.database).await;
-// Launch the application as a background task
+    // Launch the application as a background task
     let application = Application::build(configuration.clone())
         .await
         .expect("Failed to build application.");
-// Get the port before spawning the application
+    // Get the port before spawning the application
     let address = format!("http://127.0.0.1:{}", application.port());
     let _ = tokio::spawn(application.run_until_stopped());
     TestApp {

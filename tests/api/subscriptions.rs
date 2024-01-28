@@ -1,14 +1,10 @@
-use blog_newsletter::configuration::get_configuration;
 use crate::helpers::spawn_app;
 
 #[tokio::test]
 async fn subscribe_returns_a_200_for_valid_form_data() {
     // Arrange
-    let configuration = get_configuration().expect("Failed to read configuration file");
     let app = spawn_app().await;
-    let app_address = app.address;
 
-    let client = reqwest::Client::new();
     // Act
     let body = "name=my%20name&email=my_name%40gmail.com";
     let response = app.post_subscriptions(body.into()).await;
