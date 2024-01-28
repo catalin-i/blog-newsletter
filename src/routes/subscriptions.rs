@@ -1,9 +1,8 @@
 use crate::domain::{NewSubscriber, SubscriberEmail, SubscriberName};
-use crate::telemetry::init_subscriber;
-use actix_web::{web, HttpResponse, Responder};
+use actix_web::{web, HttpResponse};
 use chrono::Utc;
 use sqlx::PgPool;
-use tracing::{self, Instrument};
+use tracing::{self};
 use uuid::Uuid;
 
 #[derive(serde::Deserialize)]
