@@ -28,6 +28,7 @@ config = "0.13"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 serde = { version = "1", features = ["derive"]}
 serde-aux = "4"
+rand = { version = "0.8", features=["std_rng"] }
 uuid = { version = "1", features = ["v4"] }
 chrono = { version = "0.4.22", default-features = false, features = ["clock"] }
 unicode-segmentation = "1"
