@@ -2,11 +2,11 @@ use crate::configuration::{DatabaseSettings, Settings};
 use crate::email_client::EmailClient;
 use crate::routes::{confirm, health_check, subscribe};
 use actix_web::dev::Server;
+use actix_web::web::Data;
 use actix_web::{web, App, HttpServer};
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{PgPool, Pool, Postgres};
 use std::net::TcpListener;
-use actix_web::web::Data;
 use tracing_actix_web::TracingLogger;
 
 pub struct Application {
@@ -64,7 +64,7 @@ pub fn run(
     base_url: String,
 ) -> Result<Server, std::io::Error> {
     let db_pool = Data::new(db_pool);
-    let email_client =Data::new(email_client);
+    let email_client = Data::new(email_client);
     let base_url = Data::new(ApplicationBaseUrl(base_url));
     let server = HttpServer::new(move || {
         App::new()
